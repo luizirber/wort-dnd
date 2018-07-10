@@ -1,4 +1,7 @@
 const js = import("sourmash/sourmash.js");
-js.then(js => {
+
+function main(js) {
   js.alert_add(3,2);
-});
+}
+
+js.then(main);
