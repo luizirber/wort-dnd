@@ -1,4 +1,6 @@
 const js = import("sourmash/sourmash.js");
 js.then(js => {
-  js.alert_add(3,2);
+  console.log(js);
+  mh = new js.KmerMinHash(0, 21, false, 42, 1000, true);
+  console.log(mh);
 });

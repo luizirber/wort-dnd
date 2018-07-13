@@ -1,15 +1,18 @@
 {
   "scripts": {
-    "serve": "webpack-dev-server",
-    "build": "webpack -p"
+    "serve": "webpack-dev-server --port 8081",
+    "dist": "webpack -p"
   },
   "dependencies": {
     "sourmash": "file://../sourmash/rust/pkg/"
   },
   "devDependencies": {
     "html-webpack-plugin": "^3.2.0",
-    "webpack": "^4.0.1",
-    "webpack-cli": "^2.0.10",
-    "webpack-dev-server": "^3.1.0"
+    "webpack": "^4.15.1",
+    "webpack-cli": "^2.1.5",
+    "webpack-dev-server": "^3.1.4"
+  },
+  "resolutions": {
+    "eslint-scope": "3.7.1"
   }
 }
