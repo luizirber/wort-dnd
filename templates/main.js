@@ -2,7 +2,7 @@ var html = require('choo/html')
 
 var signature = require('./signature.js')
 
-const TITLE = 'soursigs drag and drop'
+const TITLE = 'wort drag and drop'
 
 module.exports = view
 
@@ -11,7 +11,7 @@ function view (state, emit) {
   return html`
     <body class="container">
       <div class="grass" ondragend=${dragprevent} ondragover=${dragprevent} ondrop=${drop}>
-        <p>${state.fileNames.map(function(f) {signature(f, state.Sourmash)})}</p>
+        <p>${state.fileNames.map(function(f) {return signature(f, state.Sourmash)})}</p>
       </div>
       <p class='info'>Drag a FASTQ file from your desktop on to the drop zone to see the browser calculate the signature.</p>
       <footer>
@@ -30,6 +30,6 @@ function view (state, emit) {
     for (var i = 0; i < ev.dataTransfer.files.length; i++) {
       files[i] = ev.dataTransfer.files[i]
     }
-    emit('fileDrop', files, state.Sourmash)
+    emit('fileDrop', files)
   }
 }

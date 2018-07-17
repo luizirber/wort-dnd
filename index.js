@@ -11,7 +11,7 @@ js.then(Sourmash => {
     state.fileNames = []
     state.Sourmash = Sourmash
     emitter.on('fileDrop', function (data) {
-      state.fileNames = data
+      Array.prototype.push.apply(state.fileNames, data);
       emitter.emit('render')
     })
   })
