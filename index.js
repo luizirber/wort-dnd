@@ -3,11 +3,8 @@ import choo from "choo";
 import './assets/style.css'
 
 const js = import("sourmash/sourmash.js");
-js.then(Sourmash => {
-  console.log(Sourmash);
-  var mh = new Sourmash.KmerMinHash(0, 21, false, 42, 1000, true);
-  console.log(mh);
 
+js.then(Sourmash => {
   var app = choo()
 
   app.use(function (state, emitter) {

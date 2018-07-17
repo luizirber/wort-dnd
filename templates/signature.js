@@ -6,22 +6,22 @@ var FileReadStream = require('filestream/read')
 // var FileReadStream = require('filereader-stream')
 
 module.exports = function (file, Sourmash) {
-  console.log("Reached sig calc")
   var reader = FileReadStream(file)
-  var sig = new Sourmash.minhash.MinHash(21, 10)
+  var mh = new Sourmash.KmerMinHash(10, 21, false, 42, 0, true)
 
   reader.pipe(new FASTQStream())
         .pipe(new FASTQValidator())
         .on('data', function (data) {
           var progress = document.getElementById('uploadprogress')
-          sig.addSequence(data.seq)
-          progress.value += 1
+          mh.add_sequence_js(data.seq)
+          //progress.value += 1
         })
         .on('end', function (data) {
           var progress = document.getElementById('uploadprogress')
-          progress.value = 100
+          //progress.value = 100
           var output = document.getElementById('output')
-          output.innerHTML = JSON.stringify(sig.mins, null, 4)
+          console.log(mh.to_json())
+          //output.innerHTML = JSON.stringify(mh.mins, null, 4)
         })
 
   return html`

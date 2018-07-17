@@ -11,7 +11,7 @@ function view (state, emit) {
   return html`
     <body class="container">
       <div class="grass" ondragend=${dragprevent} ondragover=${dragprevent} ondrop=${drop}>
-        <p>${state.fileNames.map(signature)}</p>
+        <p>${state.fileNames.map(function(f) {signature(f, state.Sourmash)})}</p>
       </div>
       <p class='info'>Drag a FASTQ file from your desktop on to the drop zone to see the browser calculate the signature.</p>
       <footer>
