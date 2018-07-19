@@ -1,8 +1,15 @@
 {
   "scripts": {
     "serve": "webpack-dev-server --port 8081",
-    "dist": "webpack -p"
+    "dist": "webpack -p",
+    "gh-pages": "cd dist && ghp-import -p .",
+    "clean": "cd dist && rm -f *"
   },
+  "files": [
+    "templates/**/*.js",
+    "dist/*.js",
+    "dist/*.wasm"
+  ],
   "dependencies": {
     "choo": "^6.13.0",
     "fastqstream": "^0.1.0",

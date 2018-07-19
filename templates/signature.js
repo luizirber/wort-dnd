@@ -23,7 +23,6 @@ module.exports = function (file, Sourmash) {
   var fqstream = new FASTQStream()
   var validate = new FASTQValidator()
 
-
   validate.on('data', function (data) {
     mh.add_sequence_js(data.seq)
   })
