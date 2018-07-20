@@ -21,7 +21,7 @@
     "css-loader": "^1.0.0",
     "html-webpack-plugin": "^3.2.0",
     "style-loader": "^0.21.0",
-    "webpack": "^4.15.1",
+    "webpack": "git://github.com/webpack/webpack.git#b310b9b45c7e8a60c40d13dae967f74e712ec224",
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.4"
   },
