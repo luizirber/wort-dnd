@@ -1,6 +1,6 @@
 import choo from "choo";
 
-import './assets/style.css'
+import './assets/app.css'
 
 const js = import("sourmash/sourmash.js");
 

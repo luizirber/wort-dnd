@@ -9,26 +9,83 @@ module.exports = view
 function view (state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
   return html`
-    <body class="container">
-      <div class="grass" ondragend=${dragprevent} ondragover=${dragprevent} ondrop=${drop}>
-        <p>${state.fileNames.map(function(f) {return signature(f, state.Sourmash)})}</p>
-      </div>
-      <p class='info'>Drag a FASTQ file from your desktop on to the drop zone to see the browser calculate the signature.</p>
+    <body ondragover="event.preventDefault()">
+      <header>
+        <h1>sourmash + IPFS</h1>
+      </header>
+      <main>
+        <div id="files" class="box" ondragover="event.preventDefault()">
+          <p class='info'>Drag a FASTQ file from your desktop on to the drop zone to see the browser calculate the signature.</p>
+          <h2>Files</h2>
+
+          <div id="drag-container" 
+               ondragenter=${onDragEnter}
+               ondragover=${onDragEnter}
+               ondragleave=${onDragLeave}
+               ondragend=${onDragLeave}
+               ondrop=${onDrop}>
+
+            <img width=100 src="assets/upload.svg" alt="Upload" />
+            <p><b>Drag & drop</b> a file to upload it.</p>
+          </div>
+          
+          <table id="file-history">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Progress</th>
+                <th>Size</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${renderFiles(state)}
+            </tbody>
+          </table>
+
+        </div>
+      </main>
       <footer>
         made by <a href="https://twitter.com/luizirber">@luizirber</a> with <a href="https://github.com/yoshuawuyts/choo">choo</a>
       </footer>
-    </div>
+    </body>
   `
 
-  function dragprevent () {
+  function renderFiles (state) {
+    if (state.fileNames.length == 0) {
+      return html`
+			<tr class="empty-row">
+				<td colspan="4">No signatures yet.</td>
+			</tr>
+      `
+    } else {
+      return state.fileNames.map(function(f) {
+        return signature(f, state.Sourmash)
+      })
+    }
+  }
+
+  function onDragEnter () {
+    const dragContainer = document.querySelector('#drag-container')
+    dragContainer.classList.add('dragging')
     return false
   }
 
-  function drop (ev) {
+  function onDragLeave () {
+    const dragContainer = document.querySelector('#drag-container')
+    dragContainer.classList.remove('dragging')
+    return false
+  }
+
+  function onDrop (ev) {
+    onDragLeave()
     ev.preventDefault()
     var files = []
     for (var i = 0; i < ev.dataTransfer.files.length; i++) {
-      files[i] = ev.dataTransfer.files[i]
+      files[i] = new Map([
+        ['raw', ev.dataTransfer.files[i]],
+        ['done', false],
+        ['sig', null]
+      ])
     }
     emit('fileDrop', files)
   }
