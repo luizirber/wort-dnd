@@ -18,5 +18,9 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     filename: "index.js",
   },
-  mode: "development"
+  node: {
+    zlib: true
+  },
+  mode: "development",
+  target: "web"
 };

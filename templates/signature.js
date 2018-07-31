@@ -1,9 +1,12 @@
 var html = require('choo/html')
 
 var {FASTQStream, FASTQValidator} = require('fastqstream')
+var fasta = require('fasta-parser')
 
 var humanFormat = require("human-format")
 
+var zlib = require('zlib')
+var peek = require('peek-stream')
 var FileReadStream = require('filestream/read')
 //var FileReadStream = require('filereader-stream')
 
@@ -18,6 +21,24 @@ function to_url (data) {
     }
   }
   return ''
+}
+
+function isFASTA (data) {
+  return data.toString().charAt(0) == '>'
+}
+
+function isFASTQ (data) {
+  return data.toString().charAt(0) == '@'
+}
+
+function FASTParser() {
+  return peek(function(data, swap) {
+    if (isFASTA(data)) return swap(null, new fasta())
+    if (isFASTQ(data)) return swap(null, new FASTQStream())
+
+    // we do not know - bail
+    swap(new Error('No parser available'))
+  })
 }
 
 module.exports = function (item, Sourmash) {
@@ -36,10 +57,9 @@ module.exports = function (item, Sourmash) {
 
   var mh = new Sourmash.KmerMinHash(10, 21, false, 42, 0, true)
 
-  var fqstream = new FASTQStream()
-  var validate = new FASTQValidator()
+  var seqparser = FASTParser()
 
-  validate.on('data', function (data) {
+  seqparser.on('data', function (data) {
     mh.add_sequence_js(data.seq)
   })
   .on('end', function (data) {
@@ -47,7 +67,14 @@ module.exports = function (item, Sourmash) {
     item.set('sig', mh)
   })
 
-  reader.pipe(fqstream).pipe(validate)
+  switch (file.type) {
+    case 'application/gzip':
+      reader.pipe(new zlib.Unzip()).pipe(seqparser)
+      break
+    default:
+      reader.pipe(seqparser)
+      break
+  }
 
   return html`
     <tr>
