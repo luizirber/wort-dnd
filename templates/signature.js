@@ -1,4 +1,5 @@
 var html = require('choo/html')
+var raw = require('choo/html/raw')
 
 var {FASTQStream, FASTQValidator} = require('fastqstream')
 var fasta = require('fasta-parser')
@@ -9,6 +10,8 @@ var zlib = require('zlib')
 var peek = require('peek-stream')
 var FileReadStream = require('filestream/read')
 //var FileReadStream = require('filereader-stream')
+
+const download_logo = require('../assets/download.svg')
 
 function to_url (data) {
   if (data != null) {
@@ -84,7 +87,7 @@ module.exports = function (item, Sourmash) {
 
       <td>
         <a href=${to_url(item)} download=${file.name + ".sig"}>
-          <img width=20 class="table-action" src="assets/download.svg" alt="Download" />
+          <div class='download-icon' alt="Download">${raw(download_logo)}</div>
         </a>
       </td>
 

@@ -1,6 +1,9 @@
 var html = require('choo/html')
+var raw = require('choo/html/raw')
 
 var signature = require('./signature.js')
+
+const upload_logo = require('../assets/upload.svg')
 
 const TITLE = 'wort drag and drop'
 
@@ -16,7 +19,13 @@ function view (state, emit) {
       <main>
         <div id="files" class="box" ondragover="event.preventDefault()">
           <p class='info'>Drag a FASTQ file from your desktop on to the drop zone to see the browser calculate the signature.</p>
+
           <h2>Files</h2>
+
+          <div class="input-button">
+            <input id="multihash-input" type="text" placeholder="Multihash" />
+            <button id="fetch-btn" type="button">Fetch</button>
+          </div>
 
           <div id="drag-container" 
                ondragenter=${onDragEnter}
@@ -24,8 +33,7 @@ function view (state, emit) {
                ondragleave=${onDragLeave}
                ondragend=${onDragLeave}
                ondrop=${onDrop}>
-
-            <img width=100 src="assets/upload.svg" alt="Upload" />
+            <div id='upload-icon' alt="Upload">${raw(upload_logo)}</div>
             <p><b>Drag & drop</b> a file to upload it.</p>
           </div>
           

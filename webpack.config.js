@@ -11,11 +11,12 @@ module.exports = {
   module: {
     rules: [
       {test: /\.css$/, use: ['style-loader', 'css-loader']},
-      {test: /\.wasm$/, type: 'webassembly/experimental'}
+      {test: /\.wasm$/, type: 'webassembly/experimental'},
+      {test: /\.svg$/, loader: 'svg-inline-loader'}
     ]
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "dist-ipfs"),
     filename: "index.js",
   },
   node: {
