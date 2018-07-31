@@ -3,7 +3,7 @@ var raw = require('choo/html/raw')
 
 var signature = require('./signature.js')
 
-const upload_logo = require('../assets/upload.svg')
+const uploadLogo = require('../assets/upload.svg')
 
 const TITLE = 'wort drag and drop'
 
@@ -33,7 +33,7 @@ function view (state, emit) {
                ondragleave=${onDragLeave}
                ondragend=${onDragLeave}
                ondrop=${onDrop}>
-            <div id='upload-icon' alt="Upload">${raw(upload_logo)}</div>
+            <div id='upload-icon' alt="Upload">${raw(uploadLogo)}</div>
             <p><b>Drag & drop</b> a file to upload it.</p>
           </div>
           
@@ -59,14 +59,14 @@ function view (state, emit) {
   `
 
   function renderFiles (state) {
-    if (state.fileNames.length == 0) {
+    if (state.fileNames.length === 0) {
       return html`
-			<tr class="empty-row">
-				<td colspan="4">No signatures yet.</td>
-			</tr>
+        <tr class="empty-row">
+          <td colspan="4">No signatures yet.</td>
+        </tr>
       `
     } else {
-      return state.fileNames.map(function(f) {
+      return state.fileNames.map(function (f) {
         return signature(f, state.Sourmash)
       })
     }

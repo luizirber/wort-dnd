@@ -1,19 +1,19 @@
 var html = require('choo/html')
 var raw = require('choo/html/raw')
 
-var {FASTQStream, FASTQValidator} = require('fastqstream')
-var fasta = require('fasta-parser')
+var FASTQStream = require('fastqstream')
+var Fasta = require('fasta-parser')
 
-var humanFormat = require("human-format")
+var humanFormat = require('human-format')
 
 var zlib = require('zlib')
 var peek = require('peek-stream')
 var FileReadStream = require('filestream/read')
-//var FileReadStream = require('filereader-stream')
+// var FileReadStream = require('filereader-stream')
 
-const download_logo = require('../assets/download.svg')
+const downloadLogo = require('../assets/download.svg')
 
-function to_url (data) {
+function toUrl (data) {
   if (data != null) {
     const sig = data.get('sig')
     if (sig != null) {
@@ -27,16 +27,16 @@ function to_url (data) {
 }
 
 function isFASTA (data) {
-  return data.toString().charAt(0) == '>'
+  return data.toString().charAt(0) === '>'
 }
 
 function isFASTQ (data) {
-  return data.toString().charAt(0) == '@'
+  return data.toString().charAt(0) === '@'
 }
 
-function FASTParser() {
-  return peek(function(data, swap) {
-    if (isFASTA(data)) return swap(null, new fasta())
+function FASTParser () {
+  return peek(function (data, swap) {
+    if (isFASTA(data)) return swap(null, new Fasta())
     if (isFASTQ(data)) return swap(null, new FASTQStream())
 
     // we do not know - bail
@@ -52,23 +52,24 @@ module.exports = function (item, Sourmash) {
   var size = file.size
 
   reader.reader.onprogress = function (data) {
-      loaded += data.loaded
-      var progress = document.getElementById('uploadprogress')
-      progress.max = size
-      progress.value = loaded
+    loaded += data.loaded
+    var progress = document.getElementById('uploadprogress')
+    progress.max = size
+    progress.value = loaded
   }
 
   var mh = new Sourmash.KmerMinHash(10, 21, false, 42, 0, true)
 
   var seqparser = FASTParser()
 
-  seqparser.on('data', function (data) {
-    mh.add_sequence_js(data.seq)
-  })
-  .on('end', function (data) {
-    item.set('done', true)
-    item.set('sig', mh)
-  })
+  seqparser
+    .on('data', function (data) {
+      mh.add_sequence_js(data.seq)
+    })
+    .on('end', function (data) {
+      item.set('done', true)
+      item.set('sig', mh)
+    })
 
   switch (file.type) {
     case 'application/gzip':
@@ -86,11 +87,11 @@ module.exports = function (item, Sourmash) {
       <td>${humanFormat(size, {scale: 'binary', unit: 'B'})}</td>
 
       <td>
-        <a href=${to_url(item)} download=${file.name + ".sig"}>
-          <div class='download-icon' alt="Download">${raw(download_logo)}</div>
+        <a href=${toUrl(item)} download=${file.name + '.sig'}>
+          <div class='download-icon' alt="Download">${raw(downloadLogo)}</div>
         </a>
       </td>
 
     </tr>
   `
-  }
+}
