@@ -1,0 +1,12 @@
+patch-package
+--- a/node_modules/ipld-bitcoin/src/util.js
++++ b/node_modules/ipld-bitcoin/src/util.js
+@@ -4,7 +4,7 @@ const BitcoinjsBlock = require('bitcoinjs-lib').Block
+ const CID = require('cids')
+ const multihashes = require('multihashes')
+ const multihashing = require('multihashing-async')
+-const waterfall = require('async/waterfall')
++const waterfall = require('async').waterfall
+ 
+ const BITCOIN_BLOCK_HEADER_SIZE = 80
+ 

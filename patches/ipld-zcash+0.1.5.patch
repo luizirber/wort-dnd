@@ -1,0 +1,12 @@
+patch-package
+--- a/node_modules/ipld-zcash/src/util.js
++++ b/node_modules/ipld-zcash/src/util.js
+@@ -4,7 +4,7 @@ const ZcashBitcoreBlockHeader = require('zcash-bitcore-lib').BlockHeader
+ const CID = require('cids')
+ const multihashes = require('multihashes')
+ const multihashing = require('multihashing-async')
+-const waterfall = require('async/waterfall')
++const waterfall = require('async').waterfall
+ 
+ const ZCASH_BLOCK_HEADER_SIZE = 1487
+ 

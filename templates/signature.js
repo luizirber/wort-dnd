@@ -1,15 +1,14 @@
 var html = require('choo/html')
 var raw = require('choo/html/raw')
 
-var FASTQStream = require('fastqstream')
+var FASTQStream = require('fastqstream').FASTQStream
 var Fasta = require('fasta-parser')
 
 var humanFormat = require('human-format')
 
 var zlib = require('zlib')
 var peek = require('peek-stream')
-var FileReadStream = require('filestream/read')
-// var FileReadStream = require('filereader-stream')
+const PassThrough = require('stream').PassThrough
 
 const downloadLogo = require('../assets/download.svg')
 
@@ -34,6 +33,17 @@ function isFASTQ (data) {
   return data.toString().charAt(0) === '@'
 }
 
+function isGzip (data) {
+  return (data[0] === 31) && (data[1] === 139)
+}
+
+function GzipParser () {
+  return peek(function (data, swap) {
+    if (isGzip(data)) return swap(null, new zlib.Unzip())
+    else return swap(null, new PassThrough())
+  })
+}
+
 function FASTParser () {
   return peek(function (data, swap) {
     if (isFASTA(data)) return swap(null, new Fasta())
@@ -45,46 +55,52 @@ function FASTParser () {
 }
 
 module.exports = function (item, Sourmash) {
-  var file = item.get('raw')
+  var file = item.get('file')
 
-  var reader = FileReadStream(file)
-  var loaded = 0
-  var size = file.size
+  if (!item.get('done')) {
+    var reader = item.get('raw')
 
-  reader.reader.onprogress = function (data) {
-    loaded += data.loaded
-    var progress = document.getElementById('uploadprogress')
-    progress.max = size
-    progress.value = loaded
-  }
+    /*
+    var loaded = 0
 
-  var mh = new Sourmash.KmerMinHash(10, 21, false, 42, 0, true)
+    reader.reader.onprogress = function (data) {
+      loaded += data.loaded
+      var progress = document.getElementById('uploadprogress')
+      progress.max = size
+      progress.value = loaded
+    }
+    */
 
-  var seqparser = FASTParser()
+    var mh = new Sourmash.KmerMinHash(10, 21, false, 42, 0, true)
 
-  seqparser
-    .on('data', function (data) {
-      mh.add_sequence_js(data.seq)
-    })
-    .on('end', function (data) {
-      item.set('done', true)
-      item.set('sig', mh)
-    })
+    var seqparser = new FASTParser()
+    var compressedparser = new GzipParser()
 
-  switch (file.type) {
-    case 'application/gzip':
-      reader.pipe(new zlib.Unzip()).pipe(seqparser)
-      break
-    default:
-      reader.pipe(seqparser)
-      break
+    seqparser
+      .on('data', function (data) {
+        mh.add_sequence_js(data.seq)
+      })
+      .on('end', function (data) {
+        item.set('done', true)
+        item.set('sig', mh)
+        console.log(item)
+      })
+
+    switch (file.type) {
+      case 'application/gzip':
+        reader.pipe(new zlib.Unzip()).pipe(seqparser)
+        break
+      default:
+        reader.pipe(compressedparser).pipe(seqparser)
+        break
+    }
   }
 
   return html`
     <tr>
       <td>${file.name}</td>
       <td><progress id="uploadprogress" max="100" value="0"></progress></td>
-      <td>${humanFormat(size, {scale: 'binary', unit: 'B'})}</td>
+      <td>${humanFormat(file.size, {scale: 'binary', unit: 'B'})}</td>
 
       <td>
         <a href=${toUrl(item)} download=${file.name + '.sig'}>
