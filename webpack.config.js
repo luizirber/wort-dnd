@@ -1,8 +1,8 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: "./index.js",
+  entry: './bootstrap.js',
   plugins: [
     new HtmlWebpackPlugin({
       title: 'wort DnD'
@@ -15,8 +15,8 @@ module.exports = {
     ]
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "index.js",
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bootstrap.js'
   },
-  mode: "development"
-};
+  mode: 'development'
+}

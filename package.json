@@ -3,6 +3,7 @@
     "serve": "webpack-dev-server --port 46781",
     "dist": "webpack -p",
     "gh-pages": "cd dist && ghp-import -p .",
+    "dat": "npm run clean && npm run dist && cd dist && dat sync",
     "clean": "cd dist && rm -f *"
   },
   "files": [
