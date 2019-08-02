@@ -15,7 +15,7 @@
     "choo": "^6.13.0",
     "fastqstream": "^0.1.0",
     "filereader-stream": "^2.0.0",
-    "filestream": "^4.1.3",
+    "filestream": "^5.0.0",
     "sourmash": "file://../sourmash/rust/pkg/"
   },
   "devDependencies": {
